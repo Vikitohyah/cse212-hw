@@ -22,7 +22,23 @@ public static class SetsAndMaps
     public static string[] FindPairs(string[] words)
     {
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var wordSet = new HashSet<string>(words);
+        var pairs = new List<string>();
+
+        foreach (var word in words)
+        {
+            if (word[0] < word[1])
+            {
+                string reversed = $"{word[1]}{word[0]}";
+
+                if (wordSet.Contains(reversed))
+                {
+                    pairs.Add($"{word} & {reversed}");
+                }
+            }
+        }
+
+        return pairs.ToArray();
     }
 
     /// <summary>
@@ -38,14 +54,23 @@ public static class SetsAndMaps
     /// <returns>fixed array of divisors</returns>
     public static Dictionary<string, int> SummarizeDegrees(string filename)
     {
-        var degrees = new Dictionary<string, int>();
+        var degreeTypes = new Dictionary<string, int>();
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+            var degree = fields[3].Trim();
+            if (degreeTypes.ContainsKey(degree))
+            {
+                degreeTypes[degree]++;
+            }
+            else
+            {
+                degreeTypes.Add(degree, 1);
+            }
         }
 
-        return degrees;
+        return degreeTypes;
     }
 
     /// <summary>
@@ -67,7 +92,47 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        var letters = new Dictionary<char, int>();
+
+        int count1 = 0;
+        int count2 = 0;
+
+        foreach (char letter in word1)
+        {
+            if (letter == ' ')
+                continue;
+
+            char current = char.ToUpperInvariant(letter);
+            count1++;
+
+            if (letters.TryGetValue(current, out int value))
+            {
+                letters[current] = value + 1;
+            }
+            else
+            {
+                letters.Add(current, 1);
+            }
+        }
+
+        foreach (char letter in word2)
+        {
+            if (letter == ' ')
+                continue;
+
+            char current = char.ToUpperInvariant(letter);
+            count2++;
+
+            if (!letters.TryGetValue(current, out int value))
+                return false;
+
+            letters[current] = value - 1;
+
+            if (letters[current] < 0)
+                return false;
+        }
+
+        return count1 == count2;
     }
 
     /// <summary>
